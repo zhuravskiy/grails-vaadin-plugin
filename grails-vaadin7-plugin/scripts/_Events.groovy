@@ -39,7 +39,7 @@ eventCreateWarStart = { name, stagingDir ->
                         ant.echo("SASS compilation: Temp file for Vaadin libraries: $tempUnzip")
                         ant.mkdir(dir: tempUnzip)
 
-                        String vaadinAllInSource = "http://vaadin.com/download/release/7.1/$sassCompile/vaadin-all-${sassCompile}.zip"
+                        String vaadinAllInSource = "http://vaadin.com/download/release/${sassCompile.find(~/\d+.\d+/)}/$sassCompile/vaadin-all-${sassCompile}.zip"
                         ant.echo("SASS compilation: $vaadinAllInSource")
                         String vaadinAllIn = temp.absolutePath + "/vaadin-all-${sassCompile}.zip"
                         ant.echo("SASS compilation: $vaadinAllIn")
