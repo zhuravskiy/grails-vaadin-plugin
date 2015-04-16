@@ -13,7 +13,7 @@ eventCreateWarStart = { name, stagingDir ->
     String sassCompile = config.sassCompile
     if (!sassCompile) {
         // if Vaadin version is not provided, use some it should be fine just for the SASS compilation
-        sassCompile = '7.1.9'
+        sassCompile = '7.4.3'
     }
 
     if (config?.productionMode) {
