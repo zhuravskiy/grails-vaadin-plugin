@@ -10,7 +10,7 @@ class VaadinGrailsPlugin {
 
     private static final String DEFAULT_SERVLET = "com.vaadin.grails.GrailsVaadinServlet";
 
-    def version = "7.4.3.1-bft"
+    def version = "7.4.3.3-bft"
     def grailsVersion = "2.0 > *"
     def pluginExcludes = []
 

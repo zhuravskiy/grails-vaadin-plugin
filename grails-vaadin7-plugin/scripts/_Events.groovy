@@ -1,9 +1,7 @@
 import org.codehaus.gant.GantState
 
 eventWarStart = { warName ->
-}
 
-eventCreateWarStart = { name, stagingDir ->
     GantState.verbosity = GantState.VERBOSE
     ant.logger.setMessageOutputLevel(GantState.verbosity)
 
@@ -32,27 +30,11 @@ eventCreateWarStart = { name, stagingDir ->
                     if (!sassSource.exists()) {
                         ant.echo("Source file for SASS compilation do not exist: $sassSource")
                     } else {
-                        File temp = new File("${basedir}/vaadin-sass-temp")
-                        File tempUnzip = new File("${basedir}/vaadin-sass-temp/unzipped")
-                        ant.echo("SASS compilation: Temp file for Vaadin libraries: $temp")
-                        ant.mkdir(dir: temp)
-                        ant.echo("SASS compilation: Temp file for Vaadin libraries: $tempUnzip")
-                        ant.mkdir(dir: tempUnzip)
-
-                        String vaadinAllInSource = "http://vaadin.com/download/release/${sassCompile.find(~/\d+.\d+/)}/$sassCompile/vaadin-all-${sassCompile}.zip"
-                        ant.echo("SASS compilation: $vaadinAllInSource")
-                        String vaadinAllIn = temp.absolutePath + "/vaadin-all-${sassCompile}.zip"
-                        ant.echo("SASS compilation: $vaadinAllIn")
-
-                        ant.get(src: vaadinAllInSource, dest: vaadinAllIn)
-
-                        String unzipped = tempUnzip.absolutePath
-                        ant.unzip(src: vaadinAllIn, dest: unzipped)
-                        ant.java(classpath: "$unzipped/*;$unzipped/lib/*", classname: 'com.vaadin.sass.SassCompiler', fork: true) {
+                        ant.property(name: "gcp", refid: "grails.compile.classpath")
+                        ant.java(classpath: ant.project.properties.gcp, classname: 'com.vaadin.sass.SassCompiler', fork: false) {
                             arg(value: sassSource.absolutePath)
                             arg(value: sassDestination.absolutePath)
                         }
-                        ant.delete(dir: temp)
                         ant.echo('SASS compilation: Success')
                     }
                 } catch (Exception e) {
@@ -62,6 +44,17 @@ eventCreateWarStart = { name, stagingDir ->
             }
         }
     }
+
+    GantState.verbosity = GantState.WARNINGS_AND_ERRORS
+    ant.logger.setMessageOutputLevel(GantState.verbosity)
+}
+
+eventCreateWarStart = { name, stagingDir ->
+    GantState.verbosity = GantState.VERBOSE
+    ant.logger.setMessageOutputLevel(GantState.verbosity)
+
+    def config = classLoader.loadClass('com.vaadin.grails.VaadinConfiguration').newInstance(classLoader).config
+    ant.echo("Vaadin plugin config: $config")
 
     // Allow override's in Config.groovy
     boolean removeClientJar = config?.removeClientJar ?: true
